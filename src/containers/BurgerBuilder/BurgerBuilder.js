@@ -91,10 +91,14 @@ class BurgerBuilder extends Component {
         });
     }
 
-    cancelOrder= () => {
+    cancelOrder = () => {
         this.setState({
             purchasing: false
         });
+    }
+
+    submitOrder = () => {
+        alert('You continue!');
     }
 
     render() {
@@ -110,6 +114,8 @@ class BurgerBuilder extends Component {
                 <Modal show={this.state.purchasing} dismissModal={this.cancelOrder}>
                     <OrderSummary
                         ingredients={this.state.ingredients}
+                        doCancelOrder={this.cancelOrder}
+                        doSubmitOrder={this.submitOrder}
                     />
                 </Modal>
 
