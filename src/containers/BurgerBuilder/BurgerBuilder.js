@@ -6,6 +6,7 @@ import BuildControls from '../../components/Burger/BuildControls/BuildControls';
 import Modal from '../../components/UI/Modal/Modal';
 import OrderSummary from '../../components/Burger/OrderSummary/OrderSummary';
 import axios from '../../axios-orders';
+import Spinner from '../../components/UI/Spinner/Spinner';
 
 const INGREDIENT_PRICES = {
     SALAD: 0.5,
@@ -26,7 +27,8 @@ class BurgerBuilder extends Component {
         },
         totalPrice: 4,
         purchasable: false,
-        purchasing: false
+        purchasing: false,
+        loading: false,
     }
 
     updatePurchaseState(curIngredients) {
@@ -100,6 +102,9 @@ class BurgerBuilder extends Component {
 
     submitOrder = () => {
         // alert('You continue!');
+
+        this.setState({loading: true});
+
         const upOrder = {
             ingredients: this.state.ingredients,
             price: this.state.totalPrice,
@@ -118,9 +123,19 @@ class BurgerBuilder extends Component {
         axios.post('/orders.json', upOrder)
             .then(response => {
                 console.log(response);
+
+                this.setState({
+                    loading: false,
+                    purchasing: false,
+                });
             })
             .catch(error => {
                 console.log(error);
+
+                this.setState({
+                    loading: false,
+                    purchasing: false,
+                });
             });
     }
 
@@ -132,15 +147,20 @@ class BurgerBuilder extends Component {
             disabledLessInfo[key] = disabledLessInfo[key] <= 0;
         }
 
+        let orderSummary = <OrderSummary
+                                ingredients={this.state.ingredients}
+                                doCancelOrder={this.cancelOrder}
+                                doSubmitOrder={this.submitOrder}
+                                price={this.state.totalPrice}
+                            />
+        if (this.state.loading) {
+            orderSummary = <Spinner />
+        }
+
         return (
             <Aux>
                 <Modal show={this.state.purchasing} dismissModal={this.cancelOrder}>
-                    <OrderSummary
-                        ingredients={this.state.ingredients}
-                        doCancelOrder={this.cancelOrder}
-                        doSubmitOrder={this.submitOrder}
-                        price={this.state.totalPrice}
-                    />
+                    {orderSummary}
                 </Modal>
 
                 <Burger ingredients={this.state.ingredients} />
