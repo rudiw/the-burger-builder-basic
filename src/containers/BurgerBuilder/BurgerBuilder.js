@@ -8,6 +8,7 @@ import OrderSummary from '../../components/Burger/OrderSummary/OrderSummary';
 import axios from '../../axios-orders';
 import Spinner from '../../components/UI/Spinner/Spinner';
 import withErrorHandler from '../../hoc/withErrorHandler/withErrorHandler';
+import { appendFileSync } from 'fs';
 
 const INGREDIENT_PRICES = {
     SALAD: 0.5,
@@ -150,7 +151,21 @@ class BurgerBuilder extends Component {
         //         });
         //     });
 
-        this.props.history.push('/checkout');
+        console.log('ingredients: ', this.state.ingredients );
+        const qParams = [];
+        for (let ing in this.state.ingredients ) {
+            console.log('ing', ing);
+            qParams.push(encodeURIComponent(ing) + '='
+                + encodeURIComponent(this.state.ingredients[ing]));
+        }
+        console.log('qParams', qParams);
+
+        const qpString = qParams.join('&');
+        console.log('qpString', qpString);
+
+        this.props.history.push({
+            pathname: '/checkout',
+            search: '?' + qpString});
     }
 
     render() {
