@@ -6,27 +6,29 @@ import ContactData from './ContactData/ContactData';
 
 class Checkout extends Component {
     state = {
-        ingredients: {
-            SALAD: 1,
-            BACON: 1,
-            CHEESE: 1,
-            MEAT: 1,
-        }
+        ingredients: null,
+        totalPrice: 0,
     }
 
-    componentDidMount() {
+    componentWillMount() {
         const qpString = new URLSearchParams( this.props.location.search );
-        console.log('qpString:', qpString);
+        // console.log('[Checkout] qpString:', qpString);
 
         const upIngredients = {};
+        let upPrice = 0;
         for ( let qp of qpString.entries() ) {
-            console.log('qp:', qp);
-            upIngredients[qp[0]] =+ qp[1];
+            // console.log('[Checkout] qp:', qp);
+            if (qp[0] === 'price') {
+                upPrice = qp[1];
+            } else {
+                upIngredients[qp[0]] =+ qp[1];
+            }
         }
-        console.log('upIngredients:', upIngredients);
+        // console.log('[Checkout] upIngredients:', upIngredients);
 
         this.setState({
-            ingredients: upIngredients
+            ingredients: upIngredients,
+            totalPrice: upPrice,
         })
     }
 
@@ -49,7 +51,11 @@ class Checkout extends Component {
 
                 <Route
                     path={this.props.match.url + '/contact-data'}
-                    component={ContactData} />
+                    // component={ContactData} />
+                    render={(props) => (<ContactData
+                                    upIngredients={this.state.ingredients}
+                                    upPrice={this.state.totalPrice}
+                                    {...props} />)} />
             </div>
         );
     }

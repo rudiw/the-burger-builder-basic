@@ -6,16 +6,15 @@ import BuildControls from '../../components/Burger/BuildControls/BuildControls';
 import Modal from '../../components/UI/Modal/Modal';
 import OrderSummary from '../../components/Burger/OrderSummary/OrderSummary';
 import axios from '../../axios-orders';
+
 import Spinner from '../../components/UI/Spinner/Spinner';
 import withErrorHandler from '../../hoc/withErrorHandler/withErrorHandler';
-import { appendFileSync } from 'fs';
 
 const INGREDIENT_PRICES = {
     SALAD: 0.5,
     BACON: 0.7,
     CHEESE: 0.4,
     MEAT: 1.3,
-
 }
 
 class BurgerBuilder extends Component {
@@ -25,8 +24,8 @@ class BurgerBuilder extends Component {
         totalPrice: 4,
         purchasable: false,
         purchasing: false,
-        loading: false,
-        error: false
+        loading:false,
+        error: false,
     }
 
     componentDidMount() {
@@ -116,52 +115,20 @@ class BurgerBuilder extends Component {
     submitOrder = () => {
         // alert('You continue!');
 
-        // this.setState({loading: true});
-        //don't save immediately, just go to Checkout Summary 
-        // const upOrder = {
-        //     ingredients: this.state.ingredients,
-        //     price: this.state.totalPrice,
-        //     customer: {
-        //         name: 'Rudi Wijaya',
-        //         address: {
-        //             street: 'Street One',
-        //             zipCode: '12345',
-        //             country: 'Indonesia'
-        //         },
-        //         email: 'rudi@test.com'
-        //     },
-        //     deliveryMethod: 'fastest'
-        // };
-
-        // axios.post('/orders.json', upOrder)
-        //     .then(response => {
-        //         console.log(response);
-
-        //         this.setState({
-        //             loading: false,
-        //             purchasing: false,
-        //         });
-        //     })
-        //     .catch(error => {
-        //         console.log(error);
-
-        //         this.setState({
-        //             loading: false,
-        //             purchasing: false,
-        //         });
-        //     });
-
-        console.log('ingredients: ', this.state.ingredients );
+        console.log('[BurgerBuilder] ingredients: ', this.state.ingredients );
         const qParams = [];
         for (let ing in this.state.ingredients ) {
-            console.log('ing', ing);
+            console.log('[BurgerBuilder] ing: ', ing);
             qParams.push(encodeURIComponent(ing) + '='
                 + encodeURIComponent(this.state.ingredients[ing]));
         }
-        console.log('qParams', qParams);
+        console.log('[BurgerBuilder] qParams: ', qParams);
+
+        qParams.push('price=' + this.state.totalPrice);
+        console.log('[BurgerBuilder] qParams after push price: ', qParams);
 
         const qpString = qParams.join('&');
-        console.log('qpString', qpString);
+        console.log('[BurgerBuilder] qpString: ', qpString);
 
         this.props.history.push({
             pathname: '/checkout',
